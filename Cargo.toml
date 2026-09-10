@@ -1,6 +1,6 @@
 [package]
 name = "trix-connect"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Neutral coupling layer for the -trix application family: discovery, invoice contract, and bookkeeping/VAT-rate traits."
 license = "MIT OR Apache-2.0"

@@ -6,6 +6,7 @@
 
 use async_trait::async_trait;
 use chrono::NaiveDate;
+use serde::{Deserialize, Serialize};
 
 use crate::invoice::Invoice;
 use crate::vat::VatRate;
@@ -40,8 +41,9 @@ pub trait VatRateSource {
     ) -> Result<Vec<VatRate>, BookError>;
 }
 
-/// The outcome of booking an invoice.
-#[derive(Clone, Debug, PartialEq, Eq)]
+/// The outcome of booking an invoice. Travels back over the wire as the
+/// response, so it carries serde derives.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct BookResult {
     /// The receiver's own transaction id.
     pub booking_ref: String,
@@ -51,7 +53,10 @@ pub struct BookResult {
     pub already_booked: bool,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+/// Wire form is internally tagged on `status`: `{"status":"open"}`,
+/// `{"status":"partial","paid":"50.00"}`, `{"status":"paid"}`.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "status", rename_all = "snake_case")]
 pub enum PaymentStatus {
     Open,
     /// Partly paid; `paid` is a decimal string.
